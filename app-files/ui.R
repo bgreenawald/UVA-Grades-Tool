@@ -21,11 +21,15 @@ shinyUI(fluidPage(theme = "bootstrap.css",
       uiOutput("ui"),
       
       textInput("course_input", label = "Course Name",
-                value = "i.e CS 2150"),
+                value = "CS 2150"),
 
       selectInput("graph_type", "Graph type:",
-                          c("GPA Over Time", "Grade Distribution Over Time"))
-      
+                          c("GPA Over Time", "Grade Distribution Over Time")),
+      conditionalPanel(condition = "input.graph_type == \"Grade Distribution Over Time\"",
+                       checkboxGroupInput("grades", "Filter by grades", 
+                                          choices = c("All Grades", "A_tot", "A_minus", 
+                                                      "B_plus", "B", "B_minus", "C_plus", "C", "C_minus", "Not_Passing")))
+    
   ),
     
     #Main panel

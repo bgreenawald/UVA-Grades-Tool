@@ -5,10 +5,11 @@ library(ggplot2)
 library(readxl)
 library(stringr)
 library(reshape2)
+library(foreach)
 
 #Add the back end functions to the namespace
 source("back_end_functions.R")
-setwd("C:/Users/Student/Documents/UVA Grades App")
+setwd( "C:/Users/Student/Documents/UVA Grades App")
 
 # Read in the data
 data = read_excel("Grades.xlsx")
@@ -41,7 +42,7 @@ shinyServer(function(input, output) {
   #Adjust the UI based on the users first input
   output$ui <- renderUI({
     
-    if(input$course_input != "i.e CS 2150"){
+   if(input$course_input != "i.e CS 2150"){
       #Split the input string
       course <- unlist(str_split(str_trim(input$course_input), " "))
       dept_label <- course[1]
@@ -80,11 +81,38 @@ shinyServer(function(input, output) {
           
           ggplot(plot_rows, aes(x = Period, y = Course.GPA), group = variable) + geom_point(colour = "Blue") + geom_line(group = 1, colour = "Orange")
           
-        }else if(input$graph_type == "Grade Distribution Over Time"){
+        }else if(input$graph_type == "Grade Distribution Over Time" && !is.null(input$grades)){
           #Code for reformatting 
-          plot_rows <- select(plot_rows, A_plus, A, A_minus, B_plus, B, B_minus, C_plus, C, C_minus, D_plus, D, D_minus, fail, Period)
-          melt_plot <- melt(plot_rows, id.vars = "Period")
-          ggplot(melt_plot, aes(x = Period, y = value, colour = variable, group = variable)) + geom_line()
+          if("All Grades" %in% input$grades){
+            #Process the data
+            plot_rows <- mutate(plot_rows, A_tot = A_plus + A)
+            plot_rows <- mutate(plot_rows, Not_Passing = D_plus + D + D_minus + fail)
+            plot_rows <- select(plot_rows, A_tot, A_minus, B_plus, B, B_minus,
+                                C_plus, C, C_minus, Not_Passing, Period)
+
+            #Melt the data
+            melt_plot <- melt(plot_rows, id.vars = "Period")
+            # 
+            # #Plot the data
+            ggplot(melt_plot, aes(x = Period, y = value, colour = variable, group = variable)) + 
+              geom_line(aes(linetype = variable), size = 1) 
+           }
+          else{
+            #Process the data
+            plot_rows <- mutate(plot_rows, A_tot = A_plus + A)
+            plot_rows <- mutate(plot_rows, Not_Passing = D_plus + D + D_minus + fail)
+            plot_rows <- plot_rows[, c(input$grades, "Period")]
+
+            #Melt the data
+            melt_plot <- melt(plot_rows, id.vars = "Period")
+            
+
+            #Plot the data
+            ggplot(melt_plot, aes(x = Period, y = value, colour = variable, group = variable)) +
+              geom_line(aes(linetype = variable))
+          }
+         
+        }else{
         }
         
       }
