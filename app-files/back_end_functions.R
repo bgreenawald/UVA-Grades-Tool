@@ -12,16 +12,31 @@ library(readxl)
 common_names <- .(Instructor.Last.Name, Instructor.First.Name, Instructor.Middle.Name,
                     Instructor.Email, Course.Number, Title, Period)
 
+Preprocess <- function(data){
+  use <- tbl_df(data)
+  
+  # Turn the period into a factor so it can later be sorted temporally
+  use$Period <- factor(use$Period, levels = c("2011.F", "2012.S", "2012.F",
+                                              "2013.S", "2013.F", "2014.S",
+                                              "2014.F", "2015.S", "2015.F"), labels = 
+                         c("Fall 2011", "Spring 2012", "Fall 2012", "Spring 2013",
+                           "Fall 2013", "Spring 2014", "Fall 2014", "Spring 2015",
+                           "Fall 2015"),
+                       ordered = T)
+  
+  return(use)
+}
 # Given some data frame within our grades data set, 
 # merge sections within a given period and return the result.
 # NOTE: GPA will now need to be recalculated so you must call
 # calc_GPA right afterwards
 
+# Merge common sections
 row_merge <- function(in_data_frame){
   return(ddply(.data = in_data_frame, .variables = common_names, summarize, A_plus = sum(A_plus),
-            A = sum(A), A_minus = sum(A_minus), B_plus = sum(B_plus), B = sum(B), B_minus = sum(B_minus),
-            C_plus = sum(C_plus), C = sum(C), C_minus = sum(C_minus), D_plus = sum(D_plus), D = sum(D),
-            D_minus = sum(D_minus), fail = sum(fail)))
+               A = sum(A), A_minus = sum(A_minus), B_plus = sum(B_plus), B = sum(B), B_minus = sum(B_minus),
+               C_plus = sum(C_plus), C = sum(C), C_minus = sum(C_minus), D_plus = sum(D_plus), D = sum(D),
+               D_minus = sum(D_minus), fail = sum(fail), Tot = sum(Tot), DR = sum(DR), W = sum(W)))
 }
 
 # Given a row within the grades data set, calculate the GPA
@@ -41,6 +56,7 @@ calc_GPA <- function(in_data_row){
   return(round(earned/total,2))
 }
 
+#Modded calcGPA by passing in individual grades and not a row
 calc_GPA_2 <- function(A_plus, A, A_minus, B_plus, B, B_minus, C_plus
                        , C, C_minus, D_plus, D, D_minus, Tot, DR, W){
   # Calucate the total grade points earned in this row
