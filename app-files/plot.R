@@ -10,25 +10,18 @@ library(readxl)
 library(stringr)
 library(reshape2)
 library(foreach)
+library(ggthemes)
 
-theme_custom <- function(base_size = 10, base_family = ""){
-  theme_dark(base_size = base_size, base_family = base_family)  %+replace%
-    theme(
-      axis.text = element_text(colour = "white"),
-      axis.title.x = element_text(colour = "white", face = "bold", size = 16),
-      axis.title.y = element_text(colour = "white", angle = 90, face = "bold", size = 16),
-      plot.title = element_text(colour = "White", size = 22, vjust = 0, face = "bold"),
-      panel.grid.major = element_line(colour = "black"),
-      panel.grid.minor = element_line(colour = "black"),
-      plot.background = element_rect(fill="black"),
-      legend.background = element_rect(fill = "grey38"),
-      legend.text = element_text(colour = "white", size = 12)
-  )   
-      
-}
+#Set up the custom solarized theme for the graphs
+theme_custom <- theme_solarized_2(base_size = 16, light = FALSE) + theme(axis.text.x=element_text(angle=45, hjust=1))
 
-theme_set(theme_custom())
-
+legend_labels <- scale_linetype_discrete(name="Grade Given", 
+                    breaks=c("A_tot", "A_minus", "B_plus", "B", "B_minus", "C_plus", "C", "C_minus", "Not_Passing"), 
+                    labels=c("A+/A", "A-", "B+", "B", "B-", "C+", "C", "C-", "Not Passing"))
+legend_labels_2 <- scale_colour_discrete(name="Grade Given",
+                    breaks=c("A_tot", "A_minus", "B_plus", "B", "B_minus", "C_plus", "C", "C_minus", "Not_Passing"), 
+                    labels=c("A+/A", "A-", "B+", "B", "B-", "C+", "C", "C-", "Not Passing"))
+                    
 #Plot for the GPA of a single class over time
 GPAOverTimePlot <- function(plot_rows){
   plot_rows <- mutate(plot_rows, Course.GPA = calc_GPA_2(A_plus, A, A_minus, 
@@ -37,8 +30,8 @@ GPAOverTimePlot <- function(plot_rows){
   
   return(ggplot(plot_rows, aes(x = Period, y = Course.GPA), group = variable) + 
     geom_point(colour = "blue") + geom_line(group = 1, colour = "blue", size = 2) +
-      ggtitle("Average Course GPA Over Available Semesters \n  ") + 
-      labs(y ="Average Course GPA \n ", x = " \n Semester"))
+      ggtitle("Average Course GPA Over Available Semesters \n ") + 
+      labs(y ="Average Course GPA \n ", x = " \n Semester") + theme_custom)
 }
 
 GradeDistributionOverTime <- function(plot_rows){
@@ -54,7 +47,7 @@ GradeDistributionOverTime <- function(plot_rows){
   # #Plot the data
   return(ggplot(melt_plot, aes(x = Period, y = value, colour = variable, group = variable)) + 
     geom_line(aes(linetype = variable), size = 1) + ggtitle("Number of All Grades Over Available Semesters \n") +
-      labs(x = "\n Semester", y = "Total Number of Each Grade Given \n"))
+      labs(x = "\n Semester", y = "Total Number of Each Grade Given \n") + legend_labels  + legend_labels_2 + theme_custom)
 }
 
 ParticularGradesOverTime <- function(plot_rows){
@@ -65,5 +58,5 @@ ParticularGradesOverTime <- function(plot_rows){
   #Plot the data
   return(ggplot(melt_plot, aes(x = Period, y = value, colour = variable, group = variable)) +
     geom_line(aes(linetype = variable)) + ggtitle("Number of Specified Grades Over Available Semesters \n") +
-      labs(x = "\n Semester", y = "Total Number of Each Grade Given \n"))
+      labs(x = "\n Semester", y = "Total Number of Each Grade Given \n") + legend_labels  + legend_labels_2 + theme_custom)
 }

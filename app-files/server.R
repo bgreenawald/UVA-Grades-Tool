@@ -5,6 +5,7 @@ library(ggplot2)
 library(readxl)
 library(stringr)
 library(reshape2)
+library(reshape)
 library(foreach)
 
 #Add the back end functions to the namespace
@@ -30,6 +31,10 @@ common_names <-
   )
 
 
+#Set up variables to convert from the grade selection (A+) to the grade format (A_plus)
+grades <- c("A_tot", "A_minus", "B_plus", "B", "B_minus", "C_plus", "C", "C_minus", "Not_Passing")
+names(grades) <- c("A+/A", "A-", "B+", "B", "B-", "C+", "C", "C-", "Not Passing")
+
 #Main server function
 shinyServer(function(input, output) {
   #Adjust the UI based on the users first input
@@ -52,6 +57,7 @@ shinyServer(function(input, output) {
         "Instructor Last Name",
         choices = c(relevant_rows$Instructor.Last.Name)
       )
+      
       
     }
     
@@ -85,10 +91,11 @@ shinyServer(function(input, output) {
           }
           else{
             #Process the data
+            input$grades
+            
             plot_rows <- mutate(plot_rows, A_tot = A_plus + A)
-            plot_rows <-
-              mutate(plot_rows, Not_Passing = D_plus + D + D_minus + fail)
-            plot_rows <- plot_rows[, c(input$grades, "Period")]
+            plot_rows <-mutate(plot_rows, Not_Passing = D_plus + D + D_minus + fail)
+            plot_rows <- plot_rows[, c(grades[c(input$grades)], "Period")]
             
             ParticularGradesOverTime(plot_rows)
           }
