@@ -56,7 +56,11 @@ shinyUI(fluidPage(theme = "bootstrap.css",
       conditionalPanel(condition = "input.graph_type == \"Grade Distribution Over Time\"",
                        checkboxGroupInput("grades", "Filter by grades", 
                                           choices = c("All Grades", "A+/A", "A-", 
-                                                      "B+", "B", "B-", "C+", "C", "C-", "Not Passing")))
+                                                      "B+", "B", "B-", "C+", "C", "C-", "Not Passing", "Dropped/Withdrew/Other"))),
+      
+      conditionalPanel(condition = "input.graph_type == \"Grade Distribution Over Time\"",
+                       checkboxGroupInput("type_grades", "Choose representation Type", 
+                                          choices = c("Total Grades", "Percentage"), selected = "Total Grades"))
     
   ),
     
