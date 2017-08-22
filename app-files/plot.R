@@ -97,3 +97,9 @@ ParticularPercentageOverTime <- function(plot_rows){
            geom_line(aes(linetype = variable), size = 1) + ggtitle("Percentage of Particular Over Available Semesters \n") +
            labs(x = "\n Semester", y = "Percentage of Grade Given \n") + legend_labels_percent  + legend_labels_percent2 + theme_custom)
 }
+
+NullPlot <- function(){
+  df <- data.frame()
+  g <- ggplot(df) + geom_point() + xlim(0, 10) + ylim(0, 10) + theme_custom
+  return(g)
+}

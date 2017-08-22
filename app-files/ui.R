@@ -1,4 +1,3 @@
-#Megan's Child
 
 library(shiny)
 
@@ -14,7 +13,7 @@ source("app-files/plot.R")
 
 
 # Read in the data
-data <- read_excel("Grades.xlsx")
+data <- read_csv("C:/Users/Student/UVA Grades App/app-files/Grades.csv")
 use <- Preprocess(data)
 
 getInstructors <- function(x){

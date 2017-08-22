@@ -3,19 +3,20 @@ library(plyr)
 library(dplyr)
 library(ggplot2)
 library(readxl)
+library(readr)
 library(stringr)
 library(reshape2)
 library(reshape)
 library(foreach)
 
-#Add the back end functions to the namespace
-setwd("C:/Users/Student/Documents/UVA Grades App")
+# Add the back end functions to the namespace
+setwd("C:/Users/Student/UVA Grades App")
 source("app-files/back_end_functions.R")
 source("app-files/plot.R")
 
 
 # Read in the data
-data <- read_excel("Grades.xlsx")
+data <- read_csv("C:/Users/Student/UVA Grades App/app-files/Grades.csv")
 use <- Preprocess(data)
 
 # Common names for the merge
@@ -60,7 +61,7 @@ shinyServer(function(input, output) {
   output$plot <- renderPlot({
     if (!is.null(input$instructor) && input$instructor != "") {
       #Preprocess the data
-      plot_rows <- row_merge(get_Course_Data(use, input$course_input, input$instructor))
+      plot_rows <- as.data.frame(row_merge(get_Course_Data(use, input$course_input, input$instructor)))
       
       #Plot depending on the input
       if (input$graph_type == "GPA Over Time") {
@@ -101,8 +102,12 @@ shinyServer(function(input, output) {
               ParticularPercentageOverTime(plot_rows)
             }
           }
-        } 
+        } else{
+          NullPlot()
+        }
       }
+    } else{
+      NullPlot()
     }
     
   })

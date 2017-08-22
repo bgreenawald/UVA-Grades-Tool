@@ -33,10 +33,20 @@ Preprocess <- function(data){
 
 # Merge common sections
 row_merge <- function(in_data_frame){
-  return(ddply(.data = in_data_frame, .variables = common_names, summarize, A_plus = sum(A_plus),
-               A = sum(A), A_minus = sum(A_minus), B_plus = sum(B_plus), B = sum(B), B_minus = sum(B_minus),
-               C_plus = sum(C_plus), C = sum(C), C_minus = sum(C_minus), D_plus = sum(D_plus), D = sum(D),
-               D_minus = sum(D_minus), fail = sum(fail), Tot = sum(Tot), DR = sum(DR), W = sum(W), OT = sum(OT)))
+  # return(ddply(.data = in_data_frame, .variables = common_names, summarize, A_plus = sum(A_plus),
+  #              A = sum(A), A_minus = sum(A_minus), B_plus = sum(B_plus), B = sum(B), B_minus = sum(B_minus),
+  #              C_plus = sum(C_plus), C = sum(C), C_minus = sum(C_minus), D_plus = sum(D_plus), D = sum(D),
+  #              D_minus = sum(D_minus), fail = sum(fail), Tot = sum(Tot), DR = sum(DR), W = sum(W), OT = sum(OT)))
+  
+  ret <- in_data_frame %>%
+    group_by(Instructor.Last.Name, Instructor.First.Name, Instructor.Middle.Name,
+             Instructor.Email, Course.Number, Title, Period) %>%
+    summarise(A_plus = sum(A_plus),
+                            A = sum(A), A_minus = sum(A_minus), B_plus = sum(B_plus), B = sum(B), B_minus = sum(B_minus),
+                            C_plus = sum(C_plus), C = sum(C), C_minus = sum(C_minus), D_plus = sum(D_plus), D = sum(D),
+                            D_minus = sum(D_minus), fail = sum(fail), Tot = sum(Tot), DR = sum(DR), W = sum(W), OT = sum(OT))
+  
+  return(ret)
 }
 
 # Given a row within the grades data set, calculate the GPA
