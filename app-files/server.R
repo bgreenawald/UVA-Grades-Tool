@@ -10,13 +10,13 @@ library(reshape)
 library(foreach)
 
 # Add the back end functions to the namespace
-setwd("C:/Users/Student/UVA Grades App")
+setwd("/home/benji/Documents/UVA-Grades-Tool")
 source("app-files/back_end_functions.R")
 source("app-files/plot.R")
 
 
 # Read in the data
-data <- read_csv("C:/Users/Student/UVA Grades App/app-files/Grades.csv")
+data <- read_csv("/home/benji/Documents/UVA-Grades-Tool/app-files/Grades.csv")
 use <- Preprocess(data)
 
 # Common names for the merge

@@ -1,5 +1,6 @@
 
 library(shiny)
+library(readr)
 
 #Paragraph containing a description of the app
 desc <- "Select a course in the sidebar to get information about
@@ -7,13 +8,13 @@ desc <- "Select a course in the sidebar to get information about
   about which classes to take"
 
 #Add the back end functions to the namespace
-setwd("C:/Users/Student/Documents/UVA Grades App")
+setwd("/home/benji/Documents/UVA-Grades-Tool")
 source("app-files/back_end_functions.R")
 source("app-files/plot.R")
 
 
 # Read in the data
-data <- read_csv("C:/Users/Student/UVA Grades App/app-files/Grades.csv")
+data <- read_csv("/home/benji/Documents/UVA-Grades-Tool/app-files/Grades.csv")
 use <- Preprocess(data)
 
 getInstructors <- function(x){
